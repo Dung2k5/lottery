@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Region {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lotteryTypes LotteryType[]
+}
+
+model Province {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lotteryTypes LotteryType[]
+}
+
+model Issuer {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lotteryTypes LotteryType[]
+}
+
+model DrawMode {
+  id        String   @id @default(uuid())
+  code      String   @unique
+  name      String
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  lotteryTypes LotteryType[]
+}
+
+model DataSource {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  url         String?
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  lotteryTypeMappings ExternalLotteryTypeMap[]
+}
+
+model LotteryType {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  name        String
+  category    String   // e.g. MIEN_BAC, MIEN_TRUNG, MIEN_NAM, DIEN_TOAN
+  description String?
+  isActive    Boolean  @default(true)
+  
+  regionId    String?
+  region      Region?  @relation(fields: [regionId], references: [id])
+  
+  provinceId  String?
+  province    Province? @relation(fields: [provinceId], references: [id])
+  
+  issuerId    String?
+  issuer      Issuer?   @relation(fields: [issuerId], references: [id])
+  
+  drawModeId  String?
+  drawMode    DrawMode? @relation(fields: [drawModeId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  prizeStructures PrizeStructure[]
+  auditLogs       AuditLog[]
+  externalMappings ExternalLotteryTypeMap[]
+}
+
+model ExternalLotteryTypeMap {
+  id              String      @id @default(uuid())
+  dataSourceId    String
+  dataSource      DataSource  @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  
+  externalCode    String      // Code in the external system
+  externalName    String?     // Name in the external system
+  
+  lotteryTypeId   String
+  lotteryType     LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([dataSourceId, externalCode])
+}
+
+model PrizeStructure {
+  id            String      @id @default(uuid())
+  lotteryTypeId String
+  lotteryType   LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+  
+  code          String
+  name          String
+  order         Int
+  quantity      Int
+  digitCount    Int?
+  prizeValue    String?     // Can be a formula or description
+  matchingRule  String?
+  
+  isActive      Boolean     @default(true)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model AuditLog {
+  id            String      @id @default(uuid())
+  entityType    String      // e.g. "LotteryType", "PrizeStructure"
+  entityId      String
+  action        String      // CREATE, UPDATE, DELETE, TOGGLE
+  beforeState   Json?
+  afterState    Json?
+  userId        String?
+  reason        String?
+  createdAt     DateTime    @default(now())
+
+  lotteryType   LotteryType? @relation(fields: [entityId], references: [id], map: "AuditLog_lotteryType_fkey")
+}
