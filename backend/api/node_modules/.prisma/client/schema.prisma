@@ -57,6 +57,7 @@ model Station {
   externalMappings ExternalStationMap[]
   drawSchedules    DrawSchedule[]
   exceptions       ScheduleException[]
+  drawSessions     DrawSession[]
 }
 
 model DrawMode {
@@ -82,6 +83,7 @@ model DataSource {
   lotteryTypeMappings ExternalLotteryTypeMap[]
   stationMappings     ExternalStationMap[]
   provinceMappings    ExternalProvinceMap[]
+  drawSessions        DrawSession[]
 }
 
 model LotteryType {
@@ -112,6 +114,7 @@ model LotteryType {
   externalMappings ExternalLotteryTypeMap[]
   drawSchedules    DrawSchedule[]
   exceptions       ScheduleException[]
+  drawSessions     DrawSession[]
 }
 
 model ExternalLotteryTypeMap {
@@ -237,4 +240,70 @@ model ScheduleException {
   updatedAt     DateTime    @updatedAt
 
   @@unique([stationId, lotteryTypeId, exceptionDate])
+}
+
+enum DrawStatus {
+  DRAFT
+  PENDING_VERIFICATION
+  VERIFIED
+  PUBLISHED
+  CANCELLED
+  REVISED
+}
+
+model DrawSession {
+  id            String      @id @default(uuid())
+  
+  lotteryTypeId String
+  lotteryType   LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+  
+  stationId     String?
+  station       Station?    @relation(fields: [stationId], references: [id])
+  
+  drawDate      DateTime    // Expected to be a date object (at midnight)
+  drawCode      String?     // e.g., draw 123
+  status        DrawStatus  @default(DRAFT)
+  
+  dataSourceId  String?
+  dataSource    DataSource? @relation(fields: [dataSourceId], references: [id])
+  
+  verifiedAt    DateTime?
+  publishedAt   DateTime?
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  results       PrizeResult[]
+  revisions     ResultRevision[]
+
+  @@unique([lotteryTypeId, stationId, drawDate])
+}
+
+model PrizeResult {
+  id            String      @id @default(uuid())
+  
+  drawSessionId String
+  drawSession   DrawSession @relation(fields: [drawSessionId], references: [id], onDelete: Cascade)
+  
+  prizeCode     String      // e.g., "DB", "G1"
+  prizeName     String      // e.g., "Gii c Bit"
+  winningNumbers String[]   // e.g., ["01234"]
+  order         Int         // display order
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([drawSessionId, prizeCode])
+}
+
+model ResultRevision {
+  id            String      @id @default(uuid())
+  
+  drawSessionId String
+  drawSession   DrawSession @relation(fields: [drawSessionId], references: [id], onDelete: Cascade)
+  
+  previousData  Json        // Snapshot of results before revision
+  reason        String      // Reason for revision
+  
+  createdAt     DateTime    @default(now())
 }

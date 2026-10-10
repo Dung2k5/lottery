@@ -8,9 +8,10 @@ import { RegionsModule } from './regions/regions.module';
 import { ProvincesModule } from './provinces/provinces.module';
 import { StationsModule } from './stations/stations.module';
 import { SchedulesModule } from './schedules/schedules.module';
+import { ResultsModule } from './results/results.module';
 
 @Module({
-  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule, SchedulesModule],
+  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule, SchedulesModule, ResultsModule],
   controllers: [AppController],
   providers: [AppService],
 })
