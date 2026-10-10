@@ -124,6 +124,8 @@ let ResultsService = class ResultsService {
         return this.prisma.drawSession.delete({ where: { id } });
     }
     async getPublicDrawsByDate(dateString, regionCode) {
+        console.log("THIS IS:", this);
+        console.log("PRISMA IS:", this?.prisma);
         const d = new Date(dateString);
         const startOfDay = new Date(d.setHours(0, 0, 0, 0));
         const endOfDay = new Date(d.setHours(23, 59, 59, 999));

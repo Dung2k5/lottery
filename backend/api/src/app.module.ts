@@ -9,9 +9,10 @@ import { ProvincesModule } from './provinces/provinces.module';
 import { StationsModule } from './stations/stations.module';
 import { SchedulesModule } from './schedules/schedules.module';
 import { ResultsModule } from './results/results.module';
+import { TicketCheckerModule } from './ticket-checker/ticket-checker.module';
 
 @Module({
-  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule, SchedulesModule, ResultsModule],
+  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule, SchedulesModule, ResultsModule, TicketCheckerModule],
   controllers: [AppController],
   providers: [AppService],
 })
