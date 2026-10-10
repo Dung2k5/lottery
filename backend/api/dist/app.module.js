@@ -16,12 +16,13 @@ const prisma_module_js_1 = require("./prisma/prisma.module.js");
 const regions_module_1 = require("./regions/regions.module");
 const provinces_module_1 = require("./provinces/provinces.module");
 const stations_module_1 = require("./stations/stations.module");
+const schedules_module_1 = require("./schedules/schedules.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
 exports.AppModule = AppModule = __decorate([
     (0, common_1.Module)({
-        imports: [lottery_types_module_js_1.LotteryTypesModule, prize_structures_module_js_1.PrizeStructuresModule, prisma_module_js_1.PrismaModule, regions_module_1.RegionsModule, provinces_module_1.ProvincesModule, stations_module_1.StationsModule],
+        imports: [lottery_types_module_js_1.LotteryTypesModule, prize_structures_module_js_1.PrizeStructuresModule, prisma_module_js_1.PrismaModule, regions_module_1.RegionsModule, provinces_module_1.ProvincesModule, stations_module_1.StationsModule, schedules_module_1.SchedulesModule],
         controllers: [app_controller_js_1.AppController],
         providers: [app_service_js_1.AppService],
     })

@@ -118,6 +118,83 @@ async function main() {
   });
 
   console.log('Seed Stations thành công:', stationHN.name, stationDN.name, stationHCM.name);
+
+  // 4. Seed Lottery Types
+  const xsMB = await prisma.lotteryType.upsert({
+    where: { code: 'XSMB' },
+    update: {},
+    create: {
+      code: 'XSMB',
+      name: 'Xổ số Miền Bắc',
+      category: 'MIEN_BAC',
+      regionId: mb.id,
+      stationId: stationHN.id,
+    }
+  });
+
+  const xsHCM = await prisma.lotteryType.upsert({
+    where: { code: 'XSMN-HCM' },
+    update: {},
+    create: {
+      code: 'XSMN-HCM',
+      name: 'Xổ số TP.HCM',
+      category: 'MIEN_NAM',
+      regionId: mn.id,
+      provinceId: hcm.id,
+      stationId: stationHCM.id,
+    }
+  });
+
+  const xsDN = await prisma.lotteryType.upsert({
+    where: { code: 'XSMT-DN' },
+    update: {},
+    create: {
+      code: 'XSMT-DN',
+      name: 'Xổ số Đà Nẵng',
+      category: 'MIEN_TRUNG',
+      regionId: mt.id,
+      provinceId: dn.id,
+      stationId: stationDN.id,
+    }
+  });
+
+  console.log('Seed Lottery Types thành công:', xsMB.name, xsHCM.name, xsDN.name);
+
+  // 5. Seed Draw Schedules
+  const schedules = [];
+  // XSMB: Tất cả các ngày trong tuần (0-6) lúc 18:15
+  for (let i = 0; i <= 6; i++) {
+    schedules.push({
+      stationId: stationHN.id,
+      lotteryTypeId: xsMB.id,
+      dayOfWeek: i,
+      drawTime: '18:15',
+    });
+  }
+
+  // Đài TP.HCM: Thứ 2 (1) và Thứ 7 (6) lúc 16:15
+  schedules.push({ stationId: stationHCM.id, lotteryTypeId: xsHCM.id, dayOfWeek: 1, drawTime: '16:15' });
+  schedules.push({ stationId: stationHCM.id, lotteryTypeId: xsHCM.id, dayOfWeek: 6, drawTime: '16:15' });
+
+  // Đài Đà Nẵng: Thứ 4 (3) và Thứ 7 (6) lúc 17:15
+  schedules.push({ stationId: stationDN.id, lotteryTypeId: xsDN.id, dayOfWeek: 3, drawTime: '17:15' });
+  schedules.push({ stationId: stationDN.id, lotteryTypeId: xsDN.id, dayOfWeek: 6, drawTime: '17:15' });
+
+  for (const sched of schedules) {
+    await prisma.drawSchedule.upsert({
+      where: {
+        stationId_lotteryTypeId_dayOfWeek: {
+          stationId: sched.stationId,
+          lotteryTypeId: sched.lotteryTypeId,
+          dayOfWeek: sched.dayOfWeek,
+        }
+      },
+      update: { drawTime: sched.drawTime },
+      create: sched,
+    });
+  }
+
+  console.log('Seed Draw Schedules thành công');
 }
 
 main()

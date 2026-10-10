@@ -55,6 +55,8 @@ model Station {
 
   lotteryTypes LotteryType[]
   externalMappings ExternalStationMap[]
+  drawSchedules    DrawSchedule[]
+  exceptions       ScheduleException[]
 }
 
 model DrawMode {
@@ -108,6 +110,8 @@ model LotteryType {
   prizeStructures PrizeStructure[]
   auditLogs       AuditLog[]
   externalMappings ExternalLotteryTypeMap[]
+  drawSchedules    DrawSchedule[]
+  exceptions       ScheduleException[]
 }
 
 model ExternalLotteryTypeMap {
@@ -190,8 +194,47 @@ model AuditLog {
   beforeState   Json?
   afterState    Json?
   userId        String?
-  reason        String?
+  reason String?
   createdAt     DateTime    @default(now())
 
   lotteryType   LotteryType? @relation(fields: [entityId], references: [id], map: "AuditLog_lotteryType_fkey")
+}
+
+model DrawSchedule {
+  id            String      @id @default(uuid())
+  
+  stationId     String?
+  station       Station?    @relation(fields: [stationId], references: [id])
+  
+  lotteryTypeId String
+  lotteryType   LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+  
+  dayOfWeek     Int         // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+  drawTime      String      // HH:mm format, e.g., "16:15"
+  isActive      Boolean     @default(true)
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([stationId, lotteryTypeId, dayOfWeek])
+}
+
+model ScheduleException {
+  id            String      @id @default(uuid())
+  
+  stationId     String?
+  station       Station?    @relation(fields: [stationId], references: [id])
+  
+  lotteryTypeId String
+  lotteryType   LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+  
+  exceptionDate DateTime    // The specific date of the exception
+  status        String      // CANCELLED, RESCHEDULED
+  newDrawTime   String?     // If rescheduled, the new time HH:mm
+  reason String?
+  
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([stationId, lotteryTypeId, exceptionDate])
 }

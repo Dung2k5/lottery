@@ -7,9 +7,10 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { RegionsModule } from './regions/regions.module';
 import { ProvincesModule } from './provinces/provinces.module';
 import { StationsModule } from './stations/stations.module';
+import { SchedulesModule } from './schedules/schedules.module';
 
 @Module({
-  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule],
+  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule, SchedulesModule],
   controllers: [AppController],
   providers: [AppService],
 })
