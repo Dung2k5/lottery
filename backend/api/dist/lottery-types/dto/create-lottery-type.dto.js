@@ -19,7 +19,7 @@ class CreateLotteryTypeDto {
     isActive;
     regionId;
     provinceId;
-    issuerId;
+    stationId;
     drawModeId;
 }
 exports.CreateLotteryTypeDto = CreateLotteryTypeDto;
@@ -62,7 +62,7 @@ __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),
     __metadata("design:type", String)
-], CreateLotteryTypeDto.prototype, "issuerId", void 0);
+], CreateLotteryTypeDto.prototype, "stationId", void 0);
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsOptional)(),

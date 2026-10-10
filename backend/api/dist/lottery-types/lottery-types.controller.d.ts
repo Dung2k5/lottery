@@ -13,7 +13,7 @@ export declare class LotteryTypesController {
         isActive: boolean;
         regionId: string | null;
         provinceId: string | null;
-        issuerId: string | null;
+        stationId: string | null;
         drawModeId: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -22,7 +22,9 @@ export declare class LotteryTypesController {
         region: {
             id: string;
             code: string;
+            slug: string;
             name: string;
+            order: number;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
@@ -30,16 +32,22 @@ export declare class LotteryTypesController {
         province: {
             id: string;
             code: string;
+            slug: string;
             name: string;
+            order: number;
             isActive: boolean;
             createdAt: Date;
             updatedAt: Date;
         } | null;
-        issuer: {
+        station: {
             id: string;
             code: string;
+            slug: string;
             name: string;
+            order: number;
             isActive: boolean;
+            regionId: string | null;
+            provinceId: string | null;
             createdAt: Date;
             updatedAt: Date;
         } | null;
@@ -60,7 +68,7 @@ export declare class LotteryTypesController {
         isActive: boolean;
         regionId: string | null;
         provinceId: string | null;
-        issuerId: string | null;
+        stationId: string | null;
         drawModeId: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -89,7 +97,7 @@ export declare class LotteryTypesController {
         isActive: boolean;
         regionId: string | null;
         provinceId: string | null;
-        issuerId: string | null;
+        stationId: string | null;
         drawModeId: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -103,7 +111,7 @@ export declare class LotteryTypesController {
         isActive: boolean;
         regionId: string | null;
         provinceId: string | null;
-        issuerId: string | null;
+        stationId: string | null;
         drawModeId: string | null;
         createdAt: Date;
         updatedAt: Date;
@@ -117,7 +125,7 @@ export declare class LotteryTypesController {
         isActive: boolean;
         regionId: string | null;
         provinceId: string | null;
-        issuerId: string | null;
+        stationId: string | null;
         drawModeId: string | null;
         createdAt: Date;
         updatedAt: Date;

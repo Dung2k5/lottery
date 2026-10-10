@@ -6,6 +6,6 @@ export declare class CreateLotteryTypeDto {
     isActive?: boolean;
     regionId?: string;
     provinceId?: string;
-    issuerId?: string;
+    stationId?: string;
     drawModeId?: string;
 }

@@ -10,34 +10,51 @@ datasource db {
 model Region {
   id        String   @id @default(uuid())
   code      String   @unique
+  slug      String   @unique
   name      String
+  order     Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   lotteryTypes LotteryType[]
+  stations     Station[]
 }
 
 model Province {
   id        String   @id @default(uuid())
   code      String   @unique
+  slug      String   @unique
   name      String
+  order     Int      @default(0)
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   lotteryTypes LotteryType[]
+  stations     Station[]
+  externalMappings ExternalProvinceMap[]
 }
 
-model Issuer {
+model Station {
   id        String   @id @default(uuid())
   code      String   @unique
+  slug      String   @unique
   name      String
+  order     Int      @default(0)
   isActive  Boolean  @default(true)
+  
+  regionId  String?
+  region    Region?  @relation(fields: [regionId], references: [id])
+
+  provinceId String?
+  province   Province? @relation(fields: [provinceId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   lotteryTypes LotteryType[]
+  externalMappings ExternalStationMap[]
 }
 
 model DrawMode {
@@ -61,6 +78,8 @@ model DataSource {
   updatedAt   DateTime @updatedAt
 
   lotteryTypeMappings ExternalLotteryTypeMap[]
+  stationMappings     ExternalStationMap[]
+  provinceMappings    ExternalProvinceMap[]
 }
 
 model LotteryType {
@@ -77,8 +96,8 @@ model LotteryType {
   provinceId  String?
   province    Province? @relation(fields: [provinceId], references: [id])
   
-  issuerId    String?
-  issuer      Issuer?   @relation(fields: [issuerId], references: [id])
+  stationId   String?
+  station     Station?  @relation(fields: [stationId], references: [id])
   
   drawModeId  String?
   drawMode    DrawMode? @relation(fields: [drawModeId], references: [id])
@@ -96,11 +115,47 @@ model ExternalLotteryTypeMap {
   dataSourceId    String
   dataSource      DataSource  @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
   
-  externalCode    String      // Code in the external system
-  externalName    String?     // Name in the external system
+  externalCode    String
+  externalName    String?
   
   lotteryTypeId   String
   lotteryType     LotteryType @relation(fields: [lotteryTypeId], references: [id], onDelete: Cascade)
+
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([dataSourceId, externalCode])
+}
+
+model ExternalStationMap {
+  id              String      @id @default(uuid())
+  dataSourceId    String
+  dataSource      DataSource  @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  
+  externalCode    String
+  externalName    String?
+  
+  stationId       String
+  station         Station     @relation(fields: [stationId], references: [id], onDelete: Cascade)
+
+  isActive        Boolean     @default(true)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+
+  @@unique([dataSourceId, externalCode])
+}
+
+model ExternalProvinceMap {
+  id              String      @id @default(uuid())
+  dataSourceId    String
+  dataSource      DataSource  @relation(fields: [dataSourceId], references: [id], onDelete: Cascade)
+  
+  externalCode    String
+  externalName    String?
+  
+  provinceId      String
+  province        Province    @relation(fields: [provinceId], references: [id], onDelete: Cascade)
 
   isActive        Boolean     @default(true)
   createdAt       DateTime    @default(now())
@@ -119,7 +174,7 @@ model PrizeStructure {
   order         Int
   quantity      Int
   digitCount    Int?
-  prizeValue    String?     // Can be a formula or description
+  prizeValue    String?
   matchingRule  String?
   
   isActive      Boolean     @default(true)

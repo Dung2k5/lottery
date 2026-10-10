@@ -14,5 +14,5 @@ async function bootstrap() {
     app.enableCors();
     await app.listen(3001);
 }
-bootstrap();
+bootstrap().catch(console.error);
 //# sourceMappingURL=main.js.map

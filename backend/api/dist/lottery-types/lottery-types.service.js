@@ -42,7 +42,7 @@ let LotteryTypesService = class LotteryTypesService {
             include: {
                 region: true,
                 province: true,
-                issuer: true,
+                station: true,
                 drawMode: true,
             },
         });

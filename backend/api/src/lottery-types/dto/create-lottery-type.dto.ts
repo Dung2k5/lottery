@@ -31,7 +31,7 @@ export class CreateLotteryTypeDto {
 
   @IsString()
   @IsOptional()
-  issuerId?: string;
+  stationId?: string;
 
   @IsString()
   @IsOptional()

@@ -4,9 +4,12 @@ import { AppService } from './app.service.js';
 import { LotteryTypesModule } from './lottery-types/lottery-types.module.js';
 import { PrizeStructuresModule } from './prize-structures/prize-structures.module.js';
 import { PrismaModule } from './prisma/prisma.module.js';
+import { RegionsModule } from './regions/regions.module';
+import { ProvincesModule } from './provinces/provinces.module';
+import { StationsModule } from './stations/stations.module';
 
 @Module({
-  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule],
+  imports: [LotteryTypesModule, PrizeStructuresModule, PrismaModule, RegionsModule, ProvincesModule, StationsModule],
   controllers: [AppController],
   providers: [AppService],
 })
