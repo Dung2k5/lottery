@@ -123,6 +123,68 @@ let ResultsService = class ResultsService {
         await this.findOne(id);
         return this.prisma.drawSession.delete({ where: { id } });
     }
+    async getPublicDrawsByDate(dateString, regionCode) {
+        const d = new Date(dateString);
+        const startOfDay = new Date(d.setHours(0, 0, 0, 0));
+        const endOfDay = new Date(d.setHours(23, 59, 59, 999));
+        const where = {
+            drawDate: {
+                gte: startOfDay,
+                lt: endOfDay,
+            },
+            status: {
+                in: [client_1.DrawStatus.PUBLISHED, client_1.DrawStatus.REVISED],
+            },
+        };
+        if (regionCode) {
+            where.lotteryType = {
+                region: {
+                    code: regionCode,
+                },
+            };
+        }
+        return this.prisma.drawSession.findMany({
+            where,
+            include: {
+                station: {
+                    include: {
+                        region: true,
+                        province: true,
+                    }
+                },
+                lotteryType: true,
+                results: {
+                    orderBy: { order: 'asc' },
+                },
+            },
+            orderBy: {
+                createdAt: 'asc',
+            },
+        });
+    }
+    async getLatestPublicDraws(regionCode) {
+        const where = {
+            status: {
+                in: [client_1.DrawStatus.PUBLISHED, client_1.DrawStatus.REVISED],
+            },
+        };
+        if (regionCode) {
+            where.lotteryType = {
+                region: {
+                    code: regionCode,
+                },
+            };
+        }
+        const latestDraw = await this.prisma.drawSession.findFirst({
+            where,
+            orderBy: { drawDate: 'desc' },
+            select: { drawDate: true },
+        });
+        if (!latestDraw) {
+            return [];
+        }
+        return this.getPublicDrawsByDate(latestDraw.drawDate.toISOString().split('T')[0], regionCode);
+    }
 };
 exports.ResultsService = ResultsService;
 exports.ResultsService = ResultsService = __decorate([

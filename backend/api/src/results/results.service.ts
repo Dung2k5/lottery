@@ -125,4 +125,79 @@ export class ResultsService {
     await this.findOne(id);
     return this.prisma.drawSession.delete({ where: { id } });
   }
+
+  async getPublicDrawsByDate(dateString: string, regionCode?: string) {
+    console.log("THIS IS:", this);
+    console.log("PRISMA IS:", this?.prisma);
+    const d = new Date(dateString);
+    const startOfDay = new Date(d.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(d.setHours(23, 59, 59, 999));
+
+    const where: any = {
+      drawDate: {
+        gte: startOfDay,
+        lt: endOfDay,
+      },
+      status: {
+        in: [DrawStatus.PUBLISHED, DrawStatus.REVISED],
+      },
+    };
+
+    if (regionCode) {
+      where.lotteryType = {
+        region: {
+          code: regionCode,
+        },
+      };
+    }
+
+    return this.prisma.drawSession.findMany({
+      where,
+      include: {
+        station: {
+          include: {
+            region: true,
+            province: true,
+          }
+        },
+        lotteryType: true,
+        results: {
+          orderBy: { order: 'asc' },
+        },
+      },
+      orderBy: {
+        createdAt: 'asc',
+      },
+    });
+  }
+
+  async getLatestPublicDraws(regionCode?: string) {
+    const where: any = {
+      status: {
+        in: [DrawStatus.PUBLISHED, DrawStatus.REVISED],
+      },
+    };
+
+    if (regionCode) {
+      where.lotteryType = {
+        region: {
+          code: regionCode,
+        },
+      };
+    }
+
+    // Get the latest draw date that has published results
+    const latestDraw = await this.prisma.drawSession.findFirst({
+      where,
+      orderBy: { drawDate: 'desc' },
+      select: { drawDate: true },
+    });
+
+    if (!latestDraw) {
+      return [];
+    }
+
+    // Return all draws on that date
+    return this.getPublicDrawsByDate(latestDraw.drawDate.toISOString().split('T')[0], regionCode);
+  }
 }

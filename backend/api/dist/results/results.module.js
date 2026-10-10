@@ -10,12 +10,13 @@ exports.ResultsModule = void 0;
 const common_1 = require("@nestjs/common");
 const results_service_1 = require("./results.service");
 const results_controller_1 = require("./results.controller");
+const draws_controller_1 = require("./draws.controller");
 let ResultsModule = class ResultsModule {
 };
 exports.ResultsModule = ResultsModule;
 exports.ResultsModule = ResultsModule = __decorate([
     (0, common_1.Module)({
-        controllers: [results_controller_1.ResultsController],
+        controllers: [results_controller_1.ResultsController, draws_controller_1.DrawsController],
         providers: [results_service_1.ResultsService],
     })
 ], ResultsModule);
