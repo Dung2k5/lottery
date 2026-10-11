@@ -3,6 +3,7 @@ import { CreateDrawSessionDto } from './dto/create-result.dto';
 import { UpdateDrawResultDto } from './dto/update-result.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { DrawStatus } from '@prisma/client';
+import { extractLotoSummary } from './loto.util';
 
 @Injectable()
 export class ResultsService {
@@ -127,8 +128,6 @@ export class ResultsService {
   }
 
   async getPublicDrawsByDate(dateString: string, regionCode?: string) {
-    console.log("THIS IS:", this);
-    console.log("PRISMA IS:", this?.prisma);
     const d = new Date(dateString);
     const startOfDay = new Date(d.setHours(0, 0, 0, 0));
     const endOfDay = new Date(d.setHours(23, 59, 59, 999));
@@ -151,7 +150,7 @@ export class ResultsService {
       };
     }
 
-    return this.prisma.drawSession.findMany({
+    const draws = await this.prisma.drawSession.findMany({
       where,
       include: {
         station: {
@@ -169,6 +168,11 @@ export class ResultsService {
         createdAt: 'asc',
       },
     });
+
+    return draws.map((draw) => ({
+      ...draw,
+      lotoSummary: extractLotoSummary(draw.results),
+    }));
   }
 
   async getLatestPublicDraws(regionCode?: string) {

@@ -133,7 +133,8 @@ export declare class ResultsService {
         createdAt: Date;
         updatedAt: Date;
     }>;
-    getPublicDrawsByDate(dateString: string, regionCode?: string): Promise<({
+    getPublicDrawsByDate(dateString: string, regionCode?: string): Promise<{
+        lotoSummary: import("./loto.util").LotoSummary;
         station: ({
             region: {
                 id: string;
@@ -191,7 +192,6 @@ export declare class ResultsService {
             createdAt: Date;
             updatedAt: Date;
         }[];
-    } & {
         id: string;
         lotteryTypeId: string;
         stationId: string | null;
@@ -203,8 +203,9 @@ export declare class ResultsService {
         publishedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-    })[]>;
-    getLatestPublicDraws(regionCode?: string): Promise<({
+    }[]>;
+    getLatestPublicDraws(regionCode?: string): Promise<{
+        lotoSummary: import("./loto.util").LotoSummary;
         station: ({
             region: {
                 id: string;
@@ -262,7 +263,6 @@ export declare class ResultsService {
             createdAt: Date;
             updatedAt: Date;
         }[];
-    } & {
         id: string;
         lotteryTypeId: string;
         stationId: string | null;
@@ -274,5 +274,5 @@ export declare class ResultsService {
         publishedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-    })[]>;
+    }[]>;
 }

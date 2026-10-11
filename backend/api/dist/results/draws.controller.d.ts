@@ -2,7 +2,8 @@ import { ResultsService } from './results.service';
 export declare class DrawsController {
     private readonly resultsService;
     constructor(resultsService: ResultsService);
-    getDrawsByDate(dateString: string, regionCode?: string): Promise<({
+    getDrawsByDate(dateString: string, regionCode?: string): Promise<{
+        lotoSummary: import("./loto.util").LotoSummary;
         station: ({
             region: {
                 id: string;
@@ -60,7 +61,6 @@ export declare class DrawsController {
             createdAt: Date;
             updatedAt: Date;
         }[];
-    } & {
         id: string;
         lotteryTypeId: string;
         stationId: string | null;
@@ -72,8 +72,9 @@ export declare class DrawsController {
         publishedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-    })[]>;
-    getLatestDraws(regionCode?: string): Promise<({
+    }[]>;
+    getLatestDraws(regionCode?: string): Promise<{
+        lotoSummary: import("./loto.util").LotoSummary;
         station: ({
             region: {
                 id: string;
@@ -131,7 +132,6 @@ export declare class DrawsController {
             createdAt: Date;
             updatedAt: Date;
         }[];
-    } & {
         id: string;
         lotteryTypeId: string;
         stationId: string | null;
@@ -143,5 +143,5 @@ export declare class DrawsController {
         publishedAt: Date | null;
         createdAt: Date;
         updatedAt: Date;
-    })[]>;
+    }[]>;
 }

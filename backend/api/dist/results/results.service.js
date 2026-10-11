@@ -13,6 +13,7 @@ exports.ResultsService = void 0;
 const common_1 = require("@nestjs/common");
 const prisma_service_1 = require("../prisma/prisma.service");
 const client_1 = require("@prisma/client");
+const loto_util_1 = require("./loto.util");
 let ResultsService = class ResultsService {
     prisma;
     constructor(prisma) {
@@ -124,8 +125,6 @@ let ResultsService = class ResultsService {
         return this.prisma.drawSession.delete({ where: { id } });
     }
     async getPublicDrawsByDate(dateString, regionCode) {
-        console.log("THIS IS:", this);
-        console.log("PRISMA IS:", this?.prisma);
         const d = new Date(dateString);
         const startOfDay = new Date(d.setHours(0, 0, 0, 0));
         const endOfDay = new Date(d.setHours(23, 59, 59, 999));
@@ -145,7 +144,7 @@ let ResultsService = class ResultsService {
                 },
             };
         }
-        return this.prisma.drawSession.findMany({
+        const draws = await this.prisma.drawSession.findMany({
             where,
             include: {
                 station: {
@@ -163,6 +162,10 @@ let ResultsService = class ResultsService {
                 createdAt: 'asc',
             },
         });
+        return draws.map((draw) => ({
+            ...draw,
+            lotoSummary: (0, loto_util_1.extractLotoSummary)(draw.results),
+        }));
     }
     async getLatestPublicDraws(regionCode) {
         const where = {
